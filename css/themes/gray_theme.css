@@ -31,9 +31,25 @@ li{
     border-radius: 2px;
 }
 .list_item li{
+    border-bottom: 1px #e3e3e3 solid;
     display: block;
     padding: 5px 10px;
+
 }
 .list_item li.selected{
-    background: #999999;
+    background: #f3f3f3;
+}
+.list_item li:last-child{
+    border-bottom: none;
+}
+.odd{
+    background: #f4f4f4;
+}
+.even {
+    background: #ffffff;
+}
+/*鼠标移上去背景颜色改变*/
+li:hover {
+    background-color: #006eab;
+    color: #fff;
 }
