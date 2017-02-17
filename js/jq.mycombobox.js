@@ -50,7 +50,7 @@
         //效果已经出来,只差事件绑定了
         self.bind('click',function(e){
             e.stopPropagation();
-            list.show();
+            list.toggle();
         });
         //点击空白 下拉消失
         $(document).bind('click', function(e){
