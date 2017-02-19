@@ -12,7 +12,6 @@
     hello jquery
 </h2>
 <hr>
-<label style="margin-left: 100px;">国家</label>
 <input title="国家" name="mycombobox" id="mycombobox" />
 
 <label style="margin-left: 100px;">国家</label>
@@ -20,7 +19,17 @@
 </body>
 <script>
     $(function(){
-        $('#mycombobox').combobox({data:[{text:'中国',value:'ch'},{text:'德国',value:'de'},{text:'美国',value:'us'}]});
+        $('#mycombobox').combobox({
+            data:[
+                    {text:'中国',value:'ch'},
+                    {text:'德国',value:'de'},
+                    {text:'美国',value:'us'}
+                    ],
+            title:'国家',
+            click:function(index,value){
+                alert('你选择了第'+index +'项,值为:'+ value);
+            }
+        });
         $('#mycombobox1').combobox({data:[{text:'韩国',value:'kr'},{text:'法国',value:'fr'},{text:'日本',value:'jp'}]});
     });
 </script>
