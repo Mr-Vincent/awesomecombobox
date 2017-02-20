@@ -77,7 +77,7 @@
             list = $(ul);
             var lis = list.children();
             log(lis);
-            lis.each(function(i,n){
+            lis.each(function(i){
                 var li = $(this);
                 if(i % 2 == 0){
                     li.addClass('odd');
