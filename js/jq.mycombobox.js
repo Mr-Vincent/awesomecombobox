@@ -34,12 +34,10 @@
         var self = $(this);
         var defaultOpt = {
             data:[],//下拉的数据
-            defaultTextIndex:0,//默认值的下标
+            defaultValue:0,//组件第一次加载文本框显示的文本
             title:'',//label
             width:'200px',//文本框宽度
             height:'20px',//文本框高度
-            left:'',//距离左边的高度
-            top:'',//距离上面的高度
             select_max_height:'',//下拉框最大高度,宽度能自定义,和文本框宽度一致
             transition:false,//出场动画
             multiple:false,//可否多选
@@ -58,6 +56,19 @@
         if(label != ''){
             self.before(label);
         }
+        //初始化默认值
+        if(params.data){
+            var defaultText = params.data[params.defaultValue].text;
+            self.val(defaultText);
+        }
+        //指定下拉组件的宽度
+        if(params.width){
+            self.css({width:params.width});
+        }
+        //文本框的高度
+        if(params.height){
+            self.css({height:params.height});
+        }
 
         //得到下拉内容容器对象,先在页面中定义好
         var list;
@@ -72,8 +83,6 @@
                 li += '<li val='+data[index].value+'>'+data[index].text+'</li>';
             }
             ul += li + '</ul>';
-            //$('body').append(ul);
-            //list = $('.list_item');
             list = $(ul);
             var lis = list.children();
             log(lis);
@@ -86,6 +95,9 @@
                 }
             });
             $('body').append(list);
+        }
+        if(params.select_max_height){
+            list.css({'max-height':params.select_max_height});
         }
 
         //添加样式
@@ -105,9 +117,17 @@
         //list.show();
         //alert(list.width());
         //效果已经出来,只差事件绑定了
+
         self.bind('click',function(e){
             e.stopPropagation();
-            list.toggle();
+            if(params.transition){
+                list.animate({
+                    display:'block',
+                    height:'toggle'
+                },400);
+            }else{
+                list.toggle();
+            }
         });
         //点击空白 下拉消失
         $(document).bind('click', function(e){

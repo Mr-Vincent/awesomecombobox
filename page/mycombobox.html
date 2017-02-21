@@ -24,9 +24,17 @@
             data:[
                     {text:'中国',value:'ch'},
                     {text:'德国',value:'de'},
-                    {text:'美国',value:'us'}
+                    {text:'美国',value:'us'},
+                    {text:'日本',value:'jp'},
+                    {text:'西班牙',value:'sp'},
+                    {text:'朝鲜',value:'kr'}
                     ],
+            defaultValue:1,
             title:'国家',
+            width:'300px',
+            height:'40px',
+            select_max_height:'150px',
+            transition:true,
             click:function(index,value){
                 alert('你选择了第'+index +'项,值为:'+ value);
             }
