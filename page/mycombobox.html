@@ -19,6 +19,9 @@
 <input title="国家" name="mycombobox" id="mycombobox1" />
 </body>
 <script>
+    var log = function(){
+        console.log.apply(console, arguments);
+    };
     $(function(){
         $('#mycombobox').combobox({
             data:[
@@ -32,11 +35,12 @@
             defaultValue:1,
             title:'国家',
             width:'300px',
-            height:'40px',
+            height:'20px',
             select_max_height:'150px',
             transition:true,
+            multiple:true,
             click:function(index,value){
-                alert('你选择了第'+index +'项,值为:'+ value);
+                log('你选择了第'+index +'项,值为:'+ value);
             }
         });
         $('#mycombobox1').combobox({data:[{text:'韩国',value:'kr'},{text:'法国',value:'fr'},{text:'日本',value:'jp'}]});

@@ -2,6 +2,7 @@
  * Created by dongwei on 2017/2/12.
  * 我自己定义的下拉框
  * 计划出来的很屌很炫酷
+ * 但实际上却很low
  */
 (function($,document){
     var log = function(){
@@ -25,11 +26,43 @@
             opt.click.call(target, $(target).index(), $(target).attr('val'));
         }
     }
+    //是不是多选
+    function _isMultiple(opt,target,self,list,texts,values){
+        if(opt.multiple){
+            var isSelected = target.hasClass('selected');
+            var value = target.attr('val');
+            var text = target.text();
+            if(isSelected){
+                target.removeClass('selected');
+                texts.remove(text);
+                values.remove(value);
+            }else{
+                target.addClass('selected');
+                texts.push(text);
+                values.push(value);
+            }
+            self.val(texts);
+        }else{
+            self.val(target.text());
+            list.hide();
+        }
+        _bulidValueField(values,self);
+    }
+    //生成value的隐藏域
+    function _bulidValueField(items,self){
+        var item = '';
+        for(var i = 0;i<items.length; i++){
+            item += '<input type="hidden" name="val" value="'+items[i]+'">';
+        }
+        self.empty().append(item);
+    }
     //首先是确定以怎么样的方式去渲染组件
     //选择使用选择器方式 $('selector').combobox(options);
     //这种是为jq对象添加函数
     $.fn.combobox = function(options) {
         console.log('my_combobox init');
+        var selectedValues = [];
+        var selectedTexts = [];
         //得到绑定对象
         var self = $(this);
         var defaultOpt = {
@@ -75,11 +108,11 @@
         if(options.content){
              list= $('#'+options.content);
         }else{
-            //没有预先弄好的内容,通过穿进来的参数去生成
+            //没有预先弄好的内容,通过传进来的参数去生成
             var ul = '<ul class="list_item" style="display: none">';
             var data = options.data;
             var li = '';
-            for(var index in  data){
+            for(var index = 0; index < data.length; index++){
                 li += '<li val='+data[index].value+'>'+data[index].text+'</li>';
             }
             ul += li + '</ul>';
@@ -131,15 +164,31 @@
         });
         //点击空白 下拉消失
         $(document).bind('click', function(e){
-            e.stopPropagation();
             list.hide();
         });
-
         //点击条目设置值
-        list.children().click(function () {
-            self.val($(this).text());
-            _checkClick(params,this);
-            // params.click && params.click.call(this, $(this).index(), $(this).attr('val'));
+        list.on('click','li',function(e){
+            e.stopPropagation();
+            var _this = $(e.target);
+            _checkClick(params,_this);
+            _isMultiple(params,_this,self,list,selectedTexts,selectedValues);
         });
     }
 }(jQuery,document));
+
+/**
+ * 为Array添加方法
+ */
+Array.prototype.indexOf = function(val) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+    }
+    return -1;
+};
+
+Array.prototype.remove= function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};

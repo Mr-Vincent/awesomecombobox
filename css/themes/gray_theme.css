@@ -36,9 +36,7 @@ li{
     padding: 5px 10px;
 
 }
-.list_item li.selected{
-    background: #f3f3f3;
-}
+
 .list_item li:last-child{
     border-bottom: none;
 }
@@ -52,4 +50,7 @@ li{
 li:hover {
     background-color: #006eab;
     color: #fff;
+}
+.selected{
+    background-color: #a3d5f1;
 }
