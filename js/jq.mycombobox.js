@@ -56,83 +56,39 @@
         }
         self.empty().append(item);
     }
-    //首先是确定以怎么样的方式去渲染组件
-    //选择使用选择器方式 $('selector').combobox(options);
-    //这种是为jq对象添加函数
-    $.fn.combobox = function(options) {
-        console.log('my_combobox init');
-        var selectedValues = [];
-        var selectedTexts = [];
-        //得到绑定对象
-        var self = $(this);
-        var defaultOpt = {
-            data:[],//下拉的数据
-            defaultValue:0,//组件第一次加载文本框显示的文本
-            title:'',//label
-            width:'200px',//文本框宽度
-            height:'20px',//文本框高度
-            select_max_height:'',//下拉框最大高度,宽度能自定义,和文本框宽度一致
-            transition:false,//出场动画
-            multiple:false,//可否多选
-            value:'',//指定的值
-            text:'',//要显示的值
-            onValueSelected:false,//值被选中事件
-            filter:true//筛选,输入值自动筛选,类似查找
-        };//默认参数
 
-        var params = {};
-        //合并穿进来的参数和默认参数,也就是说没传进来就用默认的,传进来了就用传进来的
-        $.extend(params, defaultOpt);
-        $.extend(params, options);
-
-        var label = _hasTitle(params);
-        if(label != ''){
-            self.before(label);
+    function genUI(self,params,selectedTexts,selectedValues){
+        $.getJSON(params.url,function(data){
+            log(data);
+            var list = genList(data);
+            initSettings(params,self,list);
+            renderUI(list,self);
+            event(self,params,list,selectedTexts,selectedValues);
+        });
+    }
+    //生成ul列表
+    function genList(data){
+        //没有预先弄好的内容,通过传进来的参数去生成
+        var ul = '<ul class="list_item" style="display: none">';
+        var li = '';
+        for(var index = 0; index < data.length; index++){
+            li += '<li val='+data[index].value+'>'+data[index].text+'</li>';
         }
-        //初始化默认值
-        if(params.data){
-            var defaultText = params.data[params.defaultValue].text;
-            self.val(defaultText);
-        }
-        //指定下拉组件的宽度
-        if(params.width){
-            self.css({width:params.width});
-        }
-        //文本框的高度
-        if(params.height){
-            self.css({height:params.height});
-        }
-
-        //得到下拉内容容器对象,先在页面中定义好
-        var list;
-        if(options.content){
-             list= $('#'+options.content);
-        }else{
-            //没有预先弄好的内容,通过传进来的参数去生成
-            var ul = '<ul class="list_item" style="display: none">';
-            var data = options.data;
-            var li = '';
-            for(var index = 0; index < data.length; index++){
-                li += '<li val='+data[index].value+'>'+data[index].text+'</li>';
+        ul += li + '</ul>';
+        return $(ul);
+    }
+    function renderUI(list,self){
+        var lis = list.children();
+        log(lis);
+        lis.each(function(i){
+            var li = $(this);
+            if(i % 2 == 0){
+                li.addClass('odd');
+            }else{
+                li.addClass('even');
             }
-            ul += li + '</ul>';
-            list = $(ul);
-            var lis = list.children();
-            log(lis);
-            lis.each(function(i){
-                var li = $(this);
-                if(i % 2 == 0){
-                    li.addClass('odd');
-                }else{
-                    li.addClass('even');
-                }
-            });
-            $('body').append(list);
-        }
-        if(params.select_max_height){
-            list.css({'max-height':params.select_max_height});
-        }
-
+        });
+        $('body').append(list);
         //添加样式
         self.addClass('ec');
         //得到位置
@@ -146,11 +102,30 @@
         var combobox_top = pos_top + self_height;
         log('left:'+pos_left + ',top:' +pos_top +'width:' +self_width);
         list.css({top:combobox_top,left:pos_left,width:self_width});
-
-        //list.show();
-        //alert(list.width());
-        //效果已经出来,只差事件绑定了
-
+    }
+    function initSettings(params,self,list){
+        var label = _hasTitle(params);
+        if(label != ''){
+            self.before(label);
+        }
+        if(params.select_max_height){
+            list.css({'max-height':params.select_max_height});
+        }
+        //初始化默认值
+        if(params.data.length > 0){
+            var defaultText = params.data[params.defaultValue].text;
+            self.val(defaultText);
+        }
+        //指定下拉组件的宽度
+        if(params.width){
+            self.css({width:params.width});
+        }
+        //文本框的高度
+        if(params.height){
+            self.css({height:params.height});
+        }
+    }
+    function event(self,params,list,selectedTexts,selectedValues){
         self.bind('click',function(e){
             e.stopPropagation();
             if(params.transition){
@@ -173,6 +148,47 @@
             _checkClick(params,_this);
             _isMultiple(params,_this,self,list,selectedTexts,selectedValues);
         });
+    }
+    //首先是确定以怎么样的方式去渲染组件
+    //选择使用选择器方式 $('selector').combobox(options);
+    //这种是为jq对象添加函数
+    $.fn.combobox = function(options) {
+        console.log('my_combobox init');
+        var selectedValues = [];
+        var selectedTexts = [];
+        //得到绑定对象
+        var self = $(this);
+        var defaultOpt = {
+            url:'',//通过指定一个url来获取下拉值
+            data:[],//下拉的数据
+            defaultValue:0,//组件第一次加载文本框显示的文本
+            title:'',//label
+            width:'200px',//文本框宽度
+            height:'20px',//文本框高度
+            select_max_height:'',//下拉框最大高度,宽度能自定义,和文本框宽度一致
+            transition:false,//出场动画
+            multiple:false,//可否多选
+            value:'',//指定的值
+            text:'',//要显示的值
+            onValueSelected:false,//值被选中事件
+            filter:true//筛选,输入值自动筛选,类似查找
+        };//默认参数
+
+        var params = {};
+        //合并穿进来的参数和默认参数,也就是说没传进来就用默认的,传进来了就用传进来的
+        $.extend(params, defaultOpt);
+        $.extend(params, options);
+        //得到下拉内容容器对象,先在页面中定义好
+        var list = null;
+        if(params.url.length > 0){
+            genUI(self,params,selectedTexts,selectedValues);
+        }else{
+            list = genList(params.data);
+            initSettings(params,self,list);
+            renderUI(list,self);
+            event(self,params,list,selectedTexts,selectedValues);
+        }
+
     }
 }(jQuery,document));
 

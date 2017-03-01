@@ -43,7 +43,12 @@
                 log('你选择了第'+index +'项,值为:'+ value);
             }
         });
-        $('#mycombobox1').combobox({data:[{text:'韩国',value:'kr'},{text:'法国',value:'fr'},{text:'日本',value:'jp'}]});
+        $('#mycombobox1').combobox({
+            url:'http://localhost:8080/json/getJSON.do'
+        });
+
+        var url1 = 'http://localhost:8080/json/getJSON.do';
+
     });
 </script>
 </html>
